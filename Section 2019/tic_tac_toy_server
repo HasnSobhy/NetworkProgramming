@@ -1,0 +1,95 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Apr 21 23:34:48 2019
+
+@author: hassan
+"""
+from tkinter import *
+from tkinter import messagebox
+from socket import *
+from threading import Thread
+import tkinter as tk
+
+
+player=1
+turn=1
+
+def click(n):
+    global btnList
+    global turn
+    global player
+    global sc
+    if(player==1):
+
+        btnList[n]['text']='O'
+        btnList[n]['state']='disable'
+        n=str(n)
+        sc.send(n.encode('utf-8'))
+        player=2
+        check()
+
+def receiveThread(sc):
+    global btnList
+    global turn
+    global player
+    while True:
+        n =sc.recv(300)
+        n=n.decode('utf-8')
+        n=int(n)
+        btnList[n]['text']='X'
+        btnList[n]['state']='disable'
+        player=1
+        check()        
+
+
+def check():
+    global turn
+    turn+=1
+    for i in range(4):
+        if ((btnList[i+(2*i)]['text']==btnList[3i+1]['text'] and btnList[3i+1]['text']==btnList[3i+2]['text'] and btnList[i+(2*i)]['text']=='X') or (btnList[i+(2*i)]['text']==btnList[3i+1]['text'] and btnList[3i+1]['text']==btnList[3i+2]['text'] a):
+            win(btnList[i+2i]["text"])
+        if (turn == 9):
+            	messagebox.showinfo("Game Over","Try Again...No Winner")
+  
+            
+         
+            
+
+	
+def win(player):
+	messagebox.showinfo("Winner",player+" Is Win")
+	reset()          
+	
+
+
+
+wind=tk.Tk()
+wind.title("Tic Tac Toe")
+wind.geometry("400x300")
+
+l1=Label(wind,text="Player1:X " , font=('Helvetiica',18))
+l1.grid(row=0,column=0)
+l2=Label(wind,text="Player2:O " , font=('Helvetiica',18))
+l2.grid(row=1,column=0)
+
+
+
+
+btnList=list()
+rw=0
+cl=0
+
+for i in range(10):
+    btnList.append(tk.Button(wind,text="",bg="#3c3c3c",fg="#ffffff",width=4,height=4,font='Helvetiica',command=partial(click, i)))
+    if(9 % i == 0 and i > 1):
+        rw+=1
+        cl=0
+        btnList[-1].grid(row=rw,column=cl)
+    else:
+        btnList[-1].grid(row=rw,column=cl)
+        cl+=1
+
+wind.mainloop()
+        
+                              
